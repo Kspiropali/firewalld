@@ -824,12 +824,6 @@ class TrayApplet(QtWidgets.QSystemTrayIcon):
                 if text in self.tooltip_messages:
                     self.tooltip_messages.remove(text)
 
-        else:
-            text = _("No NetworkManager imports available")
-            self.notify(escape(text), urgency=Notify.Urgency.CRITICAL)
-            if text not in self.tooltip_messages:
-                self.tooltip_messages.append(text)
-
         self.update_tooltip()
 
     def notify(self, msg, urgency="noicon", timeout=5):
