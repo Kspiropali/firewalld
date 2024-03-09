@@ -46,10 +46,7 @@ jobs:
           ./configure
           make dist
 
-      - uses: ncipollo/release-action@v1
+      - uses: actions/upload-artifact@v4
         with:
-          allowUpdates: true
-          artifacts: "firewalld-*.tar.bz2"
-          bodyFile: "body.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit: latest
+        name: firewalld
+        path: ["firewalld-*.tar.bz2"]
