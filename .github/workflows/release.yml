@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-    - '*'
+    - 'v*'
 
 jobs:
 
@@ -46,7 +46,27 @@ jobs:
           ./configure
           make dist
 
-      - uses: actions/upload-artifact@v4
-        with: 
-          name: firewalld
-          path: ["firewalld-*.tar.bz2"]
+      - name: make release notes
+        run: |
+          set -- $(grep "^Version:" firewalld.spec |cut -f2 -d ' ' |tr '.' ' ')
+          
+          if test 0 -eq ${2} && test 0 -eq ${3}; then
+            echo "This is a major release. It includes breaking changes."
+            echo
+            git shortlog --format="%s (%h)" --no-merges --grep "BREAKING" v$(expr ${1} - 1).0.0..HEAD
+          elif test 0 -eq ${3}; then
+            echo "This is a feature release. It also includes all bug fixes since v${1}.$(expr ${2} - 1).0."
+            echo
+            git shortlog --format="%s (%h)" --no-merges --grep "^feat" v${1}.$(expr ${2} - 1).0..HEAD
+          else
+            echo "This is a bug fix only release."
+            echo
+            git shortlog --format="%s (%h)" --grep "^\(fix\|doc\)" v${1}.${2}.$(expr ${3} - 1)..HEAD
+          fi | sed -e 's/^[ ]\+/- /' > body.md
+
+      - uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "firewalld-*.tar.bz2"
+          bodyFile: "body.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
