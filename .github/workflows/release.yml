@@ -52,3 +52,4 @@ jobs:
           artifacts: "firewalld-*.tar.bz2"
           bodyFile: "body.md"
           token: ${{ secrets.GITHUB_TOKEN }}
+          commit: latest
