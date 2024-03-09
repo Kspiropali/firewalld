@@ -47,6 +47,6 @@ jobs:
           make dist
 
       - uses: actions/upload-artifact@v4
-        with:
-        name: firewalld
-        path: ["firewalld-*.tar.bz2"]
+        with: 
+          name: firewalld
+          path: ["firewalld-*.tar.bz2"]
